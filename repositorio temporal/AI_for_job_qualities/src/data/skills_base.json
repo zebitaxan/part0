@@ -1,0 +1,27 @@
+[
+  {
+    "nombre": "Comunicación",
+    "keywords": ["hablar", "presentar", "explicar", "comunicar", "expresión"],
+    "categoria": "interpersonal"
+  },
+  {
+    "nombre": "Cierre de ventas",
+    "keywords": ["negociar", "cerrar", "clientes", "ventas", "convencer"],
+    "categoria": "técnica"
+  },
+  {
+    "nombre": "Resiliencia",
+    "keywords": ["persistente", "insistente", "no se rinde", "superar rechazo"],
+    "categoria": "personal"
+  },
+  {
+    "nombre": "Empatía",
+    "keywords": ["comprender", "cliente", "emociones", "escuchar"],
+    "categoria": "interpersonal"
+  },
+  {
+    "nombre": "Organización",
+    "keywords": ["planificar", "orden", "seguimiento", "agenda"],
+    "categoria": "cognitiva"
+  }
+]

@@ -1,0 +1,14 @@
+title 0.4 note created
+
+User->server: HTTP POST https://studies.cs.helsinki.fi/exampleapp/new_note
+note over User: the browser uploads the new created note to the server 
+note left of server: the server sends a Found code 
+server--> User: 302 Found , location: /exampleapp/notes, New_note-text/html
+note over User: the server msg causes the user to make a get to the location
+User->server: HTTP GET https://studies.cs.helsinki.fi/exampleapp/notes
+server-->User: HTML-code
+User->server: HTTP GET https://studies.cs.helsinki.fi/exampleapp/main.css
+server-->User: main.css
+User->server: HTTP GET https://studies.cs.helsinki.fi/exampleapp/main.js
+server-->User: main.js
+

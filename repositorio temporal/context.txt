@@ -1,0 +1,343 @@
+Título: Sistema IA de generación de perfiles laborales desde respuestas empresariales
+
+🧩 Contexto del proyecto
+
+Estamos construyendo un sistema de reclutamiento inteligente.
+Las empresas completan un cuestionario interactivo sobre un puesto de trabajo.
+A partir de esas respuestas, la IA debe generar un perfil ideal del puesto:
+una representación numérica (vector) que indica la importancia de distintas competencias o habilidades.
+
+Ejemplo de resultado esperado:
+
+{
+  "Comunicación": 0.9,
+  "Persuasión": 1.0,
+  "Resiliencia": 0.8,
+  "Empatía": 0.6,
+  "Organización": 0.7
+}
+
+
+Ese vector servirá luego para comparar con perfiles de candidatos.
+
+⚙️ Objetivo técnico
+
+Desarrollar un servicio (API o módulo local) que:
+
+Reciba respuestas de texto y selección de una empresa.
+
+Analice semánticamente el texto (NLP / embeddings).
+
+Compare las palabras clave con una base interna de competencias laborales.
+
+Asigne pesos a cada competencia según:
+
+Frecuencia y contexto de aparición.
+
+Relevancia semántica.
+
+Preguntas de prioridad respondidas por la empresa.
+
+Devuelva un JSON estructurado con el perfil ideal del puesto.
+
+🧠 Flujo de datos
+
+Input (respuestas de empresa):
+
+{
+  "descripcion": "Buscamos un comercial B2B con buena comunicación, persistente y enfocado en resultados.",
+  "prioridades": ["Cierre de ventas", "Comunicación", "Resiliencia"]
+}
+
+
+Procesamiento IA:
+
+Limpieza del texto
+
+Tokenización
+
+Extracción de keywords
+
+Comparación con base de competencias
+
+Calculo de pesos (ponderación)
+
+Output:
+
+{
+  "Cierre de ventas": 1.0,
+  "Comunicación": 0.9,
+  "Resiliencia": 0.8,
+  "Empatía": 0.6
+}
+
+🧩 Estructura del proyecto sugerida
+/src
+  ├── main.py                  # Entrada principal del programa o API
+  ├── analyzer/
+  │    ├── text_cleaner.py     # Limpieza y normalización del texto
+  │    ├── keyword_extractor.py# Extracción de términos clave
+  │    ├── embedding_matcher.py# Similitud semántica con base de competencias
+  │    └── weight_assigner.py  # Asignación de pesos
+  ├── data/
+  │    └── skills_base.json    # Base de competencias (nombre, keywords, categoría)
+  ├── utils/
+  │    └── text_utils.py       # Funciones auxiliares
+  └── requirements.txt
+
+🧰 Stack tecnológico sugerido
+
+Lenguaje: Python 3.11+
+
+Bibliotecas:
+
+sentence-transformers → para embeddings semánticos
+
+scikit-learn → para similitud coseno
+
+numpy, pandas → manejo de datos
+
+fastapi o flask → para exponer la API
+
+nltk o spacy → procesamiento de texto
+
+💡 Ejemplo de lógica interna (pseudocódigo)
+def generar_perfil_puesto(respuestas, base_competencias):
+    texto = limpiar_texto(respuestas["descripcion"])
+    keywords = extraer_keywords(texto)
+    prioridades = respuestas.get("prioridades", [])
+
+    perfil = {}
+    for skill in base_competencias:
+        similitud = similitud_semantica(skill["keywords"], keywords)
+        peso_base = similitud
+        if skill["nombre"] in prioridades:
+            peso_base += 0.2  # ajuste si fue prioridad
+        perfil[skill["nombre"]] = round(min(peso_base, 1.0), 2)
+
+    return perfil
+
+📚 Ejemplo de base de competencias (skills_base.json)
+[
+  {
+    "nombre": "Comunicación",
+    "keywords": ["hablar", "presentar", "explicar", "comunicar", "expresión"],
+    "categoria": "interpersonal"
+  },
+  {
+    "nombre": "Cierre de ventas",
+    "keywords": ["negociar", "cerrar", "clientes", "ventas", "convencer"],
+    "categoria": "técnica"
+  },
+  {
+    "nombre": "Resiliencia",
+    "keywords": ["persistente", "insistente", "no se rinde", "superar rechazo"],
+    "categoria": "personal"
+  },
+  {
+    "nombre": "Empatía",
+    "keywords": ["comprender", "cliente", "emociones", "escuchar"],
+    "categoria": "interpersonal"
+  },
+  {
+    "nombre": "Organización",
+    "keywords": ["planificar", "orden", "seguimiento", "agenda"],
+    "categoria": "cognitiva"
+  }
+]
+
+🚀 Tareas que Copilot debe generar
+
+Código de inicialización y carga de la base de competencias.
+
+Función para limpiar texto (quitar stopwords, normalizar, etc.).
+
+Función para extraer keywords del texto (TF-IDF o spaCy).
+
+Función para calcular similitud entre keywords y base de competencias usando embeddings.
+
+Función de ponderación final y normalización de pesos (0–1).
+
+Endpoint /generar_perfil en FastAPI que reciba JSON de respuestas y devuelva el perfil generado.
+
+Pruebas unitarias básicas con pytest.
+
+✅ Entrega esperada
+
+Código funcional y modular.
+
+Fácil de integrar con un motor de matching de candidatos.
+
+Capaz de interpretar texto en español e inglés.
+
+Resultados en formato JSON estructurado y legible.
+
+¿Quieres que te lo deje también en formato .md (Markdown) o .txt listo para copiar y subir a tu repositorio como SPEC_PERFIL_AI.md para que Copilot lo interprete con más contexto?
+Así puedes usarlo directamente como documento base de desarrollo.
+
+Perfecto 😎
+Aquí tienes un prompt/documento listo para usar en GitHub Copilot (o cualquier copiloto de IA de desarrollo) que puedes pegar directamente en tu entorno (por ejemplo, VS Code o Cursor).
+
+Este prompt está estructurado para guiar a Copilot a generar el prototipo del motor de perfilado y matching de talento, con claridad sobre la arquitectura, lógica, datos y ejemplos.
+
+🧠 PROMPT DOCUMENTO — Talent Matching AI System Blueprint
+# 🎯 Proyecto: Talent Match AI System
+## Descripción general
+Queremos crear un sistema que reciba respuestas de una empresa (texto y opciones) y devuelva un **perfil de puesto ideal** expresado como un vector de habilidades con pesos numéricos.
+Luego, ese vector podrá ser comparado con los vectores de los candidatos para determinar qué tan compatible es cada uno con el puesto.
+
+---
+
+## 🧩 Objetivos principales
+1. Analizar las respuestas textuales de la empresa para **extraer competencias y rasgos clave**.
+2. Mapear esos rasgos a una **base estándar de habilidades**.
+3. Asignar pesos dinámicos según la importancia percibida.
+4. Generar un **perfil final del puesto** (diccionario tipo `{habilidad: peso}`).
+5. Permitir comparar ese perfil con los de los candidatos usando una métrica de similitud.
+
+---
+
+## ⚙️ Arquitectura recomendada
+
+### 1. Input
+Archivo o formulario JSON con respuestas de la empresa:
+```json
+{
+  "objetivo_puesto": "Aumentar las ventas B2B en un 30% anual",
+  "responsabilidades": "Contactar clientes, cerrar negociaciones, manejar objeciones",
+  "autonomia": "Alta",
+  "trabajo_equipo": "Moderado",
+  "descripcion_candidato_ideal": "Alguien persistente, con buena comunicación y gran energía para cerrar clientes difíciles",
+  "prioridades": ["Cierre de ventas", "Comunicación", "Resiliencia", "Organización"]
+}
+
+2. Procesamiento (pipeline principal)
+a) Limpieza y tokenización del texto
+
+Convertir a minúsculas
+
+Eliminar signos, stopwords, etc.
+
+Extraer palabras clave
+
+b) Módulo NLP para extracción semántica
+
+Usar modelo de embeddings (sentence-transformers, OpenAI embeddings, etc.)
+
+Comparar cada token con una base de competencias laborales
+
+Seleccionar las más cercanas (cosine similarity > 0.7)
+
+c) Asignación de pesos
+
+Base: frecuencia o relevancia del término
+
+Ajustes:
+
+Si está en la lista de “prioridades” → +0.2
+
+Si aparece más de una vez → +0.1
+
+Si tiene sinónimos relevantes → +0.05
+
+Limitar pesos entre 0.0 y 1.0
+
+d) Generación del vector del perfil
+
+Ejemplo de salida:
+
+{
+  "Cierre de ventas": 1.0,
+  "Comunicación": 0.9,
+  "Resiliencia": 0.8,
+  "Organización": 0.7,
+  "Empatía": 0.6
+}
+
+3. Base de competencias (ejemplo inicial)
+competencias = {
+    "Comunicación": ["hablar", "presentar", "escuchar", "argumentar"],
+    "Cierre de ventas": ["negociar", "cerrar", "convencer", "ventas"],
+    "Resiliencia": ["persistencia", "no rendirse", "resistencia", "reintento"],
+    "Empatía": ["entender", "cliente", "emociones", "ponerse en el lugar"],
+    "Organización": ["planificar", "seguimiento", "orden", "metodología"]
+}
+
+
+Copilot debe:
+
+Crear una función get_closest_competencies(text, competencias) que calcule la similitud entre el texto y cada lista de sinónimos usando embeddings.
+
+Retornar las más cercanas con sus puntajes.
+
+4. Motor de Matching
+
+Crear una función calculate_match(perfil_empresa, perfil_candidato) usando similitud del coseno:
+
+from numpy import dot
+from numpy.linalg import norm
+
+def calculate_match(perfil_empresa, perfil_candidato):
+    keys = set(perfil_empresa.keys()) | set(perfil_candidato.keys())
+    v1 = [perfil_empresa.get(k, 0) for k in keys]
+    v2 = [perfil_candidato.get(k, 0) for k in keys]
+    return dot(v1, v2) / (norm(v1) * norm(v2))
+
+
+Resultado → valor entre 0 y 1 (1 = match perfecto)
+
+🧮 Flujo completo en pseudocódigo
+text = load_responses("empresa.json")
+competencias_base = load_competencias()
+
+tokens = clean_and_tokenize(text)
+matched_competencias = get_closest_competencies(tokens, competencias_base)
+perfil = assign_weights(matched_competencias, prioridades)
+save_profile(perfil, "perfil_empresa.json")
+
+# Ejemplo de matching
+candidato = load_profile("perfil_candidato.json")
+score = calculate_match(perfil, candidato)
+print(f"Compatibilidad: {score*100:.2f}%")
+
+🧰 Tecnologías recomendadas
+
+Python 3.10+
+
+openai o sentence-transformers (para embeddings)
+
+numpy para operaciones vectoriales
+
+json o pandas para manejar datos
+
+fastapi o flask para crear un endpoint si se quiere servir por API
+
+✅ Entregable esperado
+
+Copilot debe generar:
+
+Un script Python llamado perfilador.py con:
+
+Función de extracción y similitud
+
+Función de asignación de pesos
+
+Función de generación del perfil
+
+Un segundo script matching.py con:
+
+Función de similitud del coseno
+
+Ejemplo práctico de comparación entre empresa y candidato
+
+📘 Notas para Copilot
+
+Mantén el código limpio, comentado y modular.
+
+Asegúrate de que los pesos finales estén normalizados (0.0–1.0).
+
+Prioriza interpretabilidad sobre complejidad.
+
+Los nombres de variables deben ser legibles en español.
+
+Incluye ejemplos de entrada/salida en los docstrings.

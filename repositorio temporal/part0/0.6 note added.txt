@@ -1,0 +1,16 @@
+title 0.6 note added
+
+User->server: HTTP GET https://studies.cs.helsinki.fi/exampleapp/spa
+server--> User: 200 ok, spa.html -Code
+User->server: HTTP GET https://studies.cs.helsinki.fi/exampleapp/main.css
+server-->User: 200 ok, main.css
+User->server: HTTP GET https://studies.cs.helsinki.fi/exampleapp/spa.js
+server-->User: 200 ok, spa.js
+User->server: HTTP GET https://studies.cs.helsinki.fi/exampleapp/data.json
+server-->User:200 ok,data.json
+User->server: HTTP GET https://studies.cs.helsinki.fi/favicon.ico
+server-->User:200 ok,favicon.ico
+note over User: this time creating a new note doesn't make the page to reload
+note over User: instead it sends the new note to the server and adds it to the list via commands
+User->server: HTTP POST https://studies.cs.helsinki.fi/exampleapp/new_note_spa
+
